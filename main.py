@@ -38,7 +38,34 @@ class GridCanvas(tk.Canvas):
         #(event.width - (self.gridAry.shape[0]-1)*self.ngx+self.ndm) /2, (event.height - (self.gridAry.shape[1]-1)*self.ngy+self.ndm) /2
         #scaling so buggy
         self.populate()
-        self.drawNodes(True)
+        self.drawNodes(True) #updates
+        #self.draw_edges(True) #updates
+
+    # def draw_edges(self, update=False):
+    #     print("draw_edges")
+    #     prevNode = self.gridAry[0,0]
+    #     if not update:
+    #         for (r, c), n in np.ndenumerate(self.gridAry):
+    #             self.create_line([n.center, prevNode.center], tags=[n.name+'line'])
+    #             prevNode = n
+    #     else:
+    #         for (r, c), n in np.ndenumerate(self.gridAry):
+    #             self.coords(n.name+'line', n.pos)
+
+    def set_neighbors(self):
+        '''puts the neighbors of each node'''
+        grid_shape = self.grid_dimensions()
+        for (r, c), n in np.ndenumerate(self.gridAry):
+            node_left = self.gridAry[r, c-1] if c-1 > 0 else []
+            node_right = self.gridAry[r,c+1] if c+1 < grid_shape[1] else []
+            node_up = self.gridAry[r-1,c] if r-1 > 0 else []
+            node_down = self.gridAry[r+1,c] if r+1 < grid_shape[0] else []
+            n.neighbors = [node_left, node_right, node_up, node_down]
+            print(n.neighbors)
+
+
+    def grid_dimensions(self):
+        return self.gridAry.shape #(x,y)
 
 class Node():
     def __init__(self, name, color, position):
@@ -50,6 +77,7 @@ class Node():
         self.passable = True
         self.pos = position #coordinates of the bounding box
         self.center = ((position[2]-position[0])/2)+position[0], ((position[3]-position[1]) /2)+position[1]
+        self.neighbors = [] #list of neighboring nodes
 
     def invert_passable(self):
         self.passable = not self.passable
@@ -58,7 +86,22 @@ class Node():
     def r_passable(self):
         return self.passable
 
+    def name_int(self):
+        '''returns the name as a tuple of ints
+        'x,y'
+        (x,y)
+        '''
+        return int(self.name[0]), int(self.name[3])
 
+if __name__ == '__main__':
+    root = tk.Tk()
+    gr = GridCanvas( root, 1, 2, width=500, height=500)
+    gr.populate()
+    gr.drawNodes()
+    #gr.draw_edges()
+    gr.set_neighbors()
+    gr.pack(side="bottom", fill="both", expand=True)
+    tk.mainloop()
 # root = tk.Tk()
 # gr = GridCanvas(root, 2, 3, width=500, height=500)
 # gr.populate()
@@ -89,13 +132,7 @@ class Node():
   # .pack()
   #
   # ainloop()gatoin
-if __name__ == '__main__':
-  root = tk.Tk()
-  gr = GridCanvas( root, 2, 3, width=500, height=500)
-  gr.populate()
-  gr.drawNodes()
-  gr.pack(side="bottom", fill="both", expand=True)
-  tk.mainloop()
+
     # #pulldown menu
     # variable = StringVar(root)
     # navigation = Navigator.r_options()

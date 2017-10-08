@@ -1,6 +1,7 @@
 import numpy as np
 import tkinter as tk
 import time
+import navigation as nv
 
 class GridCanvas(tk.Canvas):
     '''Grid object hold nodes'''
@@ -70,9 +71,15 @@ class GridCanvas(tk.Canvas):
             node_down = self.gridAry[r,c+1] if c+1 < grid_shape[1] else []
             node_left = self.gridAry[r-1,c] if r-1 >= 0 else []
             node_right = self.gridAry[r+1,c] if r+1 < grid_shape[0] else []
-            n.neighbors = [node_left, node_right, node_up, node_down]
+            node_dleft = self.gridAry[r-1, c-1] if r-1 >= 0 and c-1 >= 0 else []
+            node_dright = self.gridAry[r+1, c-1] if r+1 < grid_shape[0] and c-1 >= 0 else []
+            node_ddown = self.gridAry[r-1, c+1] if r-1 >= 0 and c+1 < grid_shape[1] else []
+            node_dup = self.gridAry[r+1, c+1] if r+1 < grid_shape[0] and c+1 < grid_shape[1] else []
+            n.neighbors = [node_left, node_right, node_up, node_down, node_dleft, node_dright, node_ddown, node_dup]
+            #nodes = [self.gridAry[r, c-1], self.gridAry[r,c+1], self.gridAry[r-1,c], self.gridAry[r+1,c], self.gridAry[r+1, c+1], self.gridAry[r+1, c-1], self.gridAry[r-1, c+1], self.gridAry[r-1, c-1]]
+            #n.neighbors = nodes
             n.neighbors = [n for n in n.neighbors if n]
-            #print(n.neighbors)
+            print( [str(n) for n in n.neighbors] )
 
     def change_node(self, node):
         x,y = node.name_int()
@@ -118,7 +125,7 @@ class Node:
 def breadth_first_search( _grid, start_node, end_node, _visited = []):
     grid = _grid
     print(start_node)
-    #time.sleep(.10)
+    time.sleep(.10)
     start_node.color = "blue" #change color
     grid.change_node(start_node)
     #root.after(100, grid.change_node(start_node))
@@ -147,6 +154,7 @@ if __name__ == '__main__':
     gr.drawNodes()
     #gr.draw_edges()
     gr.set_neighbors()
+
     gry = gr.get_grid_array()
     start, end = gry[0,0], gry[2,2]
     #gry[0,0].color = "blue"
@@ -158,7 +166,11 @@ if __name__ == '__main__':
     def str_path(path):
         return [str(p) for p in path]
 
-    button = tk.Button( root, text="search", command = wrap_breadth_first_search )
+    def wrap_djiktras():
+        nav = nv.Navigation(start, end, gr)
+        print(nav.dij())
+
+    button = tk.Button( root, text="search", command = wrap_djiktras)
     button.pack()
 
 

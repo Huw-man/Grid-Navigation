@@ -44,7 +44,7 @@ class Node:
     return self.passable
 
   def r_position(self):
-  	return self.postion
+    return self.postion
 
   def r_color(self):
     return self.color
@@ -70,11 +70,10 @@ if __name__ == '__main__':
   gr.populate()
   gr.drawNodes()
   gr.pack(side="bottom", fill="both", expand=True)
-  #pulldown menu
-	variable = StringVar(root)
-  navigation = Navigator.r_options()
-	variable.set(navi) # default value
-	w = OptionMenu(root, variable, "one", "two", "three")
-	w.pack()
-
-	mainloop()gatoin
+    #pulldown menu
+    variable = StringVar(root)
+    navigation = Navigator.r_options()
+    variable.set(navigation[0]) # default value
+    w = apply(OptionMenu, (root, variable) + tuple(navigation))
+    w.pack()
+    mainloop()
